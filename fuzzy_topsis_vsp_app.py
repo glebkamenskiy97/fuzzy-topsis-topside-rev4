@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 st.set_page_config(page_title="Fuzzy TOPSIS App", layout="wide")
+st.set_option('client.showErrorDetails', True)
 st.title("Приложение для поддержки принятия решения по выбору рационального варианта верхнего строения морской нефтегазопромысловой платформы")
 
 # --- Ввод данных ---
@@ -47,9 +48,8 @@ for alt in alt_labels:
         val = data_input[(data_input["Альтернатива"] == alt) & (data_input["Критерий"] == crit)]["Оценка (l,m,u)"].values[0]
         try:
             l, m, u = map(float, val.strip().split(","))
-            if not (l < m < u):
-                st.warning(f"TFN для {alt}, {crit} должен быть: l < m < u")
-                valid_input = False
+            if l > u:
+                st.info(f"⚠️ Подозрительная TFN для {alt}, {crit}: левый конец больше правого (l > u)")
             row.append((l, m, u))
         except:
             st.error(f"Неверный формат для {alt}, {crit}. Ожидается: l,m,u")
